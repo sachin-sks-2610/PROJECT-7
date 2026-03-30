@@ -1,0 +1,47 @@
+{
+  "metrics": {
+    "totalRevenue": { "value": 45890, "growth": 12, "trend": "up" },
+    "totalSales": { "value": 3240, "growth": 8.5, "trend": "up" },
+    "newCustomers": { "value": 1280, "growth": -3.2, "trend": "down" },
+    "conversionRate": { "value": 4.6, "growth": 1.8, "trend": "up" }
+  },
+  "salesOverview": {
+    "labels": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+    "revenue": [32000,27500,41000,38000,44500,39000,52000,48000,55000,49000,61000,58000],
+    "sales": [210,185,270,245,310,260,355,320,385,340,420,395]
+  },
+  "categoryPerformance": {
+    "labels": ["Electronics","Clothing","Accessories","Home Appliances","Furniture"],
+    "revenue": [128000,74000,52000,91000,43000]
+  },
+  "trafficSources": {
+    "labels": ["Organic Search","Social Media","Direct Traffic","Paid Ads","Email Marketing"],
+    "values": [38,24,18,13,7]
+  },
+  "weeklySales": {
+    "labels": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    "sales": [1250,1480,1320,1690,2100,2450,1870]
+  },
+  "recentOrders": [
+    { "id": "ORD-001", "customer": "Priya Sharma",  "product": "MacBook Pro",       "amount": 2499, "status": "Completed", "date": "2026-03-01", "category": "Electronics" },
+    { "id": "ORD-002", "customer": "Rahul Verma",   "product": "Running Shoes",     "amount": 149,  "status": "Pending",   "date": "2026-03-02", "category": "Clothing" },
+    { "id": "ORD-003", "customer": "Anjali Singh",  "product": "Smart Watch",       "amount": 399,  "status": "Completed", "date": "2026-03-03", "category": "Accessories" },
+    { "id": "ORD-004", "customer": "Vikram Patel",  "product": "Coffee Table",      "amount": 289,  "status": "Cancelled", "date": "2026-03-03", "category": "Furniture" },
+    { "id": "ORD-005", "customer": "Kavitha Reddy", "product": "iPhone 15 Pro",     "amount": 1199, "status": "Completed", "date": "2026-03-04", "category": "Electronics" },
+    { "id": "ORD-006", "customer": "Arjun Nair",    "product": "Headphones",        "amount": 249,  "status": "Pending",   "date": "2026-03-04", "category": "Electronics" },
+    { "id": "ORD-007", "customer": "Sneha Iyer",    "product": "Air Purifier",      "amount": 329,  "status": "Completed", "date": "2026-03-05", "category": "Home Appliances" },
+    { "id": "ORD-008", "customer": "Amit Gupta",    "product": "Yoga Mat",          "amount": 59,   "status": "Cancelled", "date": "2026-03-05", "category": "Accessories" },
+    { "id": "ORD-009", "customer": "Pooja Mehta",   "product": "Laptop Stand",      "amount": 89,   "status": "Pending",   "date": "2026-03-06", "category": "Accessories" },
+    { "id": "ORD-010", "customer": "Rohan Joshi",   "product": "4K Monitor",        "amount": 749,  "status": "Completed", "date": "2026-03-07", "category": "Electronics" },
+    { "id": "ORD-011", "customer": "Deepa Pillai",  "product": "Desk Chair",        "amount": 459,  "status": "Completed", "date": "2026-03-07", "category": "Furniture" },
+    { "id": "ORD-012", "customer": "Suresh Kumar",  "product": "Bluetooth Speaker", "amount": 179,  "status": "Pending",   "date": "2026-03-08", "category": "Electronics" }
+  ],
+  "regions": ["All States","Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"],
+  "categories": ["All Categories","Electronics","Clothing","Accessories","Home Appliances","Furniture"],
+  "notifications": [
+    { "id": 1, "message": "New order received from Priya Sharma", "time": "2 min ago", "read": false },
+    { "id": 2, "message": "Revenue target 80% achieved", "time": "15 min ago", "read": false },
+    { "id": 3, "message": "New customer registered: Rahul Verma", "time": "1 hr ago", "read": true },
+    { "id": 4, "message": "Monthly report is ready to download", "time": "3 hrs ago", "read": true }
+  ]
+}

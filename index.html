@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DASHIQ Analytics — Business Dashboard</title>
+
+  <!-- Tailwind CSS CDN (with fallback when this domain is blocked) -->
+  <script
+    src="https://cdn.tailwindcss.com"
+    onerror="(function(){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css';document.head.appendChild(link);}())"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css"/>
+
+  <script>
+    /* Configure Tailwind only when the CDN script is available. */
+    if (window.tailwind) {
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: { DEFAULT: '#6366F1', hover: '#4F46E5', light: '#EEF2FF' },
+              accent:  { DEFAULT: '#22C55E', light: '#DCFCE7' },
+              surface: '#F8FAFC',
+            },
+            fontFamily: { inter: ['Inter', 'sans-serif'] },
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-[#F8FAFC] dark:bg-gray-950 font-inter text-gray-800 dark:text-gray-100 transition-colors duration-300">
+
+<!-- ============================================================
+     SIDEBAR
+     ============================================================ -->
+<aside id="sidebar"
+  class="sidebar fixed top-0 left-0 h-screen w-64 bg-white dark:bg-gray-900 shadow-xl z-40 flex flex-col transition-all duration-300">
+
+  <!-- Logo -->
+  <div class="flex items-center gap-3 px-6 py-5 border-b border-gray-100 dark:border-gray-800">
+    <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-md">
+      <i class="fa-solid fa-chart-line text-white text-sm"></i>
+    </div>
+    <span class="sidebar-text text-xl font-bold text-gray-900 dark:text-white tracking-tight">DASHIQ</span>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-1 px-4 py-6 overflow-y-auto">
+    <p class="sidebar-text text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3 px-2">Main Menu</p>
+    <ul class="space-y-1">
+      <li>
+        <a href="#" class="nav-item active" data-section="dashboard">
+          <i class="fa-solid fa-gauge w-5 text-center"></i>
+          <span class="sidebar-text">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-item" data-section="sales">
+          <i class="fa-solid fa-chart-line w-5 text-center"></i>
+          <span class="sidebar-text">Sales Analytics</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-item" data-section="customers">
+          <i class="fa-solid fa-users w-5 text-center"></i>
+          <span class="sidebar-text">Customers</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-item" data-section="products">
+          <i class="fa-solid fa-box w-5 text-center"></i>
+          <span class="sidebar-text">Products</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-item" data-section="reports">
+          <i class="fa-solid fa-file-chart-pie w-5 text-center"></i>
+          <span class="sidebar-text">Reports</span>
+        </a>
+      </li>
+    </ul>
+
+    <p class="sidebar-text text-xs font-semibold text-gray-400 uppercase tracking-widest mt-6 mb-3 px-2">Preferences</p>
+    <ul class="space-y-1">
+      <li>
+        <a href="#" class="nav-item" data-section="settings">
+          <i class="fa-solid fa-gear w-5 text-center"></i>
+          <span class="sidebar-text">Settings</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- User profile -->
+  <div class="px-4 py-4 border-t border-gray-100 dark:border-gray-800">
+    <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition">
+      <img src="https://ui-avatars.com/api/?name=Admin+User&background=6366F1&color=fff&size=40&bold=true"
+           alt="User Avatar" class="w-9 h-9 rounded-full ring-2 ring-primary/30"/>
+      <div class="sidebar-text">
+        <p class="text-sm font-semibold text-gray-900 dark:text-white">Admin User</p>
+        <p class="text-xs text-gray-400">admin@rise.io</p>
+      </div>
+      <i class="fa-solid fa-ellipsis sidebar-text ml-auto text-gray-400 text-xs"></i>
+    </div>
+  </div>
+</aside>
+
+<!-- ============================================================
+     MAIN WRAPPER
+     ============================================================ -->
+<div id="main-wrapper" class="main-wrapper transition-all duration-300">
+
+  <!-- ===== TOP NAVIGATION BAR ===== -->
+  <header class="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 md:px-6 py-3 flex items-center gap-4">
+
+    <!-- Hamburger (mobile + collapse) -->
+    <button id="sidebar-toggle" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400">
+      <i class="fa-solid fa-bars text-lg"></i>
+    </button>
+
+    <!-- Page title -->
+    <div class="hidden sm:block">
+      <h1 class="text-lg font-bold text-gray-900 dark:text-white" id="page-title">Dashboard Overview</h1>
+    </div>
+
+    <!-- Spacer -->
+    <div class="flex-1"></div>
+
+    <!-- Search -->
+    <div class="relative hidden md:block">
+      <input type="text" id="global-search" placeholder="Search orders, customers…"
+        class="pl-10 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/40 w-56 transition"/>
+      <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+    </div>
+
+    <!-- Notification Bell -->
+    <div class="relative">
+      <button id="notif-btn" class="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400">
+        <i class="fa-solid fa-bell text-lg"></i>
+        <span id="notif-badge" class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">2</span>
+      </button>
+      <!-- Notification Dropdown -->
+      <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden z-50">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+          <span class="font-semibold text-sm text-gray-900 dark:text-white">Notifications</span>
+          <button id="mark-all-read" class="text-xs text-primary font-medium hover:underline">Mark all read</button>
+        </div>
+        <ul id="notif-list" class="divide-y divide-gray-50 dark:divide-gray-800 max-h-72 overflow-y-auto"></ul>
+        <div class="px-4 py-2 text-center border-t border-gray-100 dark:border-gray-800">
+          <a href="#" class="text-xs text-primary font-medium hover:underline">View all notifications</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dark/Light Toggle -->
+    <button id="theme-toggle" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400" title="Toggle dark mode">
+      <i class="fa-solid fa-moon text-lg" id="theme-icon"></i>
+    </button>
+
+    <!-- User Profile Dropdown -->
+    <div class="relative">
+      <button id="profile-btn" class="flex items-center gap-2 pl-1 pr-3 py-1 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+        <img src="https://ui-avatars.com/api/?name=Admin+User&background=6366F1&color=fff&size=40&bold=true"
+             alt="Avatar" class="w-8 h-8 rounded-full"/>
+        <span class="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-300">Admin</span>
+        <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+      </button>
+      <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-44 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden z-50">
+        <a href="#" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <i class="fa-solid fa-user w-4 text-center text-gray-400"></i> Profile
+        </a>
+        <a href="#" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <i class="fa-solid fa-gear w-4 text-center text-gray-400"></i> Settings
+        </a>
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
+        <a href="#" class="flex items-center gap-2 px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+          <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== DASHBOARD CONTENT ===== -->
+  <main class="p-4 md:p-6">
+
+    <!-- ======================== DASHBOARD SECTION ======================== -->
+    <section id="section-dashboard" class="page-section space-y-6">
+
+    <!-- ── Filters ── -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 flex flex-wrap gap-3 items-end">
+      <div class="flex flex-col gap-1 min-w-[160px]">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Date Range</label>
+        <select id="filter-date" class="filter-select">
+          <option value="all">All Time</option>
+          <option value="today">Today</option>
+          <option value="week" selected>This Week</option>
+          <option value="month">This Month</option>
+          <option value="quarter">This Quarter</option>
+          <option value="year">This Year</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1 min-w-[160px]">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Category</label>
+        <select id="filter-category" class="filter-select">
+          <option value="All Categories">All Categories</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Clothing">Clothing</option>
+          <option value="Accessories">Accessories</option>
+          <option value="Home Appliances">Home Appliances</option>
+          <option value="Furniture">Furniture</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1 min-w-[160px]">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Region</label>
+        <select id="filter-region" class="filter-select">
+          <option value="All States">All States</option>
+          <optgroup label="─── States ───────────────">
+          <option value="Andhra Pradesh">Andhra Pradesh</option>
+          <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+          <option value="Assam">Assam</option>
+          <option value="Bihar">Bihar</option>
+          <option value="Chhattisgarh">Chhattisgarh</option>
+          <option value="Goa">Goa</option>
+          <option value="Gujarat">Gujarat</option>
+          <option value="Haryana">Haryana</option>
+          <option value="Himachal Pradesh">Himachal Pradesh</option>
+          <option value="Jharkhand">Jharkhand</option>
+          <option value="Karnataka">Karnataka</option>
+          <option value="Kerala">Kerala</option>
+          <option value="Madhya Pradesh">Madhya Pradesh</option>
+          <option value="Maharashtra">Maharashtra</option>
+          <option value="Manipur">Manipur</option>
+          <option value="Meghalaya">Meghalaya</option>
+          <option value="Mizoram">Mizoram</option>
+          <option value="Nagaland">Nagaland</option>
+          <option value="Odisha">Odisha</option>
+          <option value="Punjab">Punjab</option>
+          <option value="Rajasthan">Rajasthan</option>
+          <option value="Sikkim">Sikkim</option>
+          <option value="Tamil Nadu">Tamil Nadu</option>
+          <option value="Telangana">Telangana</option>
+          <option value="Tripura">Tripura</option>
+          <option value="Uttar Pradesh">Uttar Pradesh</option>
+          <option value="Uttarakhand">Uttarakhand</option>
+          <option value="West Bengal">West Bengal</option>
+          </optgroup>
+          <optgroup label="─── Union Territories ────">
+          <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+          <option value="Chandigarh">Chandigarh</option>
+          <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
+          <option value="Delhi">Delhi (NCT)</option>
+          <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+          <option value="Ladakh">Ladakh</option>
+          <option value="Lakshadweep">Lakshadweep</option>
+          <option value="Puducherry">Puducherry</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="flex gap-2 ml-auto">
+        <button id="btn-refresh" class="btn-secondary flex items-center gap-2">
+          <i class="fa-solid fa-arrows-rotate"></i> Refresh
+        </button>
+        <button id="btn-print" class="btn-primary flex items-center gap-2">
+          <i class="fa-solid fa-print"></i> Print
+        </button>
+        <button id="btn-export-report" class="btn-accent flex items-center gap-2">
+          <i class="fa-solid fa-file-arrow-down"></i> Report
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Metric Cards ── -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="metrics-grid">
+
+      <!-- Revenue -->
+      <div class="metric-card group">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="metric-label">Total Revenue</p>
+            <p class="metric-value" data-target="45890" data-prefix="$" id="metric-revenue">$0</p>
+            <div class="metric-trend up">
+              <i class="fa-solid fa-arrow-trend-up text-xs"></i>
+              <span id="metric-revenue-growth">+12% from last month</span>
+            </div>
+          </div>
+          <div class="metric-icon bg-indigo-100 dark:bg-indigo-900/40 text-primary">
+            <i class="fa-solid fa-dollar-sign text-xl"></i>
+          </div>
+        </div>
+        <div class="metric-bar mt-4">
+          <div class="metric-bar-fill bg-primary" style="--bar-pct: 72%"></div>
+        </div>
+        <p class="text-xs text-gray-400 mt-1">72% of monthly target</p>
+      </div>
+
+      <!-- Sales -->
+      <div class="metric-card group">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="metric-label">Total Sales</p>
+            <p class="metric-value" data-target="3240" data-prefix="" id="metric-sales">0</p>
+            <div class="metric-trend up">
+              <i class="fa-solid fa-arrow-trend-up text-xs"></i>
+              <span id="metric-sales-growth">+8.5% from last month</span>
+            </div>
+          </div>
+          <div class="metric-icon bg-blue-100 dark:bg-blue-900/40 text-blue-500">
+            <i class="fa-solid fa-cart-shopping text-xl"></i>
+          </div>
+        </div>
+        <div class="metric-bar mt-4">
+          <div class="metric-bar-fill bg-blue-500" style="--bar-pct: 65%"></div>
+        </div>
+        <p class="text-xs text-gray-400 mt-1">65% of monthly target</p>
+      </div>
+
+      <!-- Customers -->
+      <div class="metric-card group">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="metric-label">New Customers</p>
+            <p class="metric-value" data-target="1280" data-prefix="" id="metric-customers">0</p>
+            <div class="metric-trend down">
+              <i class="fa-solid fa-arrow-trend-down text-xs"></i>
+              <span id="metric-customers-growth">-3.2% from last month</span>
+            </div>
+          </div>
+          <div class="metric-icon bg-emerald-100 dark:bg-emerald-900/40 text-emerald-500">
+            <i class="fa-solid fa-user-plus text-xl"></i>
+          </div>
+        </div>
+        <div class="metric-bar mt-4">
+          <div class="metric-bar-fill bg-emerald-500" style="--bar-pct: 48%"></div>
+        </div>
+        <p class="text-xs text-gray-400 mt-1">48% of monthly target</p>
+      </div>
+
+      <!-- Conversion Rate -->
+      <div class="metric-card group">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="metric-label">Conversion Rate</p>
+            <p class="metric-value" data-target="4.6" data-prefix="" data-suffix="%" id="metric-conversion">0%</p>
+            <div class="metric-trend up">
+              <i class="fa-solid fa-arrow-trend-up text-xs"></i>
+              <span id="metric-conversion-growth">+1.8% from last month</span>
+            </div>
+          </div>
+          <div class="metric-icon bg-orange-100 dark:bg-orange-900/40 text-orange-500">
+            <i class="fa-solid fa-percent text-xl"></i>
+          </div>
+        </div>
+        <div class="metric-bar mt-4">
+          <div class="metric-bar-fill bg-orange-500" style="--bar-pct: 58%"></div>
+        </div>
+        <p class="text-xs text-gray-400 mt-1">58% of monthly target</p>
+      </div>
+
+    </div>
+
+    <!-- ── Charts Row 1: Sales Overview + Category Bar ── -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+
+      <!-- Sales Overview (Line Chart) -->
+      <div class="chart-card lg:col-span-3">
+        <div class="chart-card-header">
+          <div>
+            <h2 class="chart-title">Sales Overview</h2>
+            <p class="chart-subtitle">Monthly revenue & sales trend</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="chart-tab active" data-chart="salesOverview" data-mode="both">Both</button>
+            <button class="chart-tab" data-chart="salesOverview" data-mode="revenue">Revenue</button>
+            <button class="chart-tab" data-chart="salesOverview" data-mode="sales">Sales</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="salesOverviewChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Category Bar Chart -->
+      <div class="chart-card lg:col-span-2">
+        <div class="chart-card-header">
+          <div>
+            <h2 class="chart-title">Category Performance</h2>
+            <p class="chart-subtitle">Revenue by product category</p>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Charts Row 2: Traffic Pie + Weekly Area ── -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+
+      <!-- Traffic Sources Pie -->
+      <div class="chart-card lg:col-span-2">
+        <div class="chart-card-header">
+          <div>
+            <h2 class="chart-title">Traffic Sources</h2>
+            <p class="chart-subtitle">Visitor acquisition channels</p>
+          </div>
+        </div>
+        <div class="chart-container" style="max-height:260px">
+          <canvas id="trafficChart"></canvas>
+        </div>
+        <!-- Legend -->
+        <ul id="traffic-legend" class="mt-3 space-y-2"></ul>
+      </div>
+
+      <!-- Weekly Sales Area Chart -->
+      <div class="chart-card lg:col-span-3">
+        <div class="chart-card-header">
+          <div>
+            <h2 class="chart-title">Weekly Sales Trend</h2>
+            <p class="chart-subtitle">Daily sales volume this week</p>
+          </div>
+          <!-- Live pulse -->
+          <div class="flex items-center gap-2 text-xs text-emerald-500 font-medium">
+            <span class="live-dot"></span> Live
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="weeklySalesChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Recent Orders Table ── -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+      <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+        <div>
+          <h2 class="text-base font-semibold text-gray-900 dark:text-white">Recent Orders</h2>
+          <p class="text-xs text-gray-400 mt-0.5">Showing <span id="orders-count">12</span> orders · Last updated: <span id="last-updated">–</span></p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="relative">
+            <input type="text" id="table-search" placeholder="Search orders…"
+              class="pl-8 pr-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/40 w-40 transition"/>
+            <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+          </div>
+          <select id="status-filter" class="filter-select text-sm py-2">
+            <option value="all">All Status</option>
+            <option value="Completed">Completed</option>
+            <option value="Pending">Pending</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+          <select id="per-page-select" class="filter-select text-sm py-2">
+            <option value="5" selected>5 / page</option>
+            <option value="10">10 / page</option>
+            <option value="25">25 / page</option>
+          </select>
+          <button id="btn-table-csv" class="btn-primary flex items-center gap-2 text-xs py-2">
+            <i class="fa-solid fa-file-csv"></i> CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-800/60 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+              <th class="sortable px-5 py-3 text-left" data-col="id">Order ID <i class="fa-solid fa-sort ml-1 opacity-50" id="sort-icon-id"></i></th>
+              <th class="sortable px-5 py-3 text-left" data-col="customer">Customer <i class="fa-solid fa-sort ml-1 opacity-50" id="sort-icon-customer"></i></th>
+              <th class="px-5 py-3 text-left">Product</th>
+              <th class="px-5 py-3 text-left">Category</th>
+              <th class="sortable px-5 py-3 text-right" data-col="amount">Amount <i class="fa-solid fa-sort ml-1 opacity-50" id="sort-icon-amount"></i></th>
+              <th class="px-5 py-3 text-center">Status</th>
+              <th class="sortable px-5 py-3 text-left" data-col="date">Date <i class="fa-solid fa-sort ml-1 opacity-50" id="sort-icon-date"></i></th>
+            </tr>
+          </thead>
+          <tbody id="orders-tbody" class="divide-y divide-gray-50 dark:divide-gray-800">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex flex-wrap items-center justify-between gap-2 px-5 py-3 border-t border-gray-100 dark:border-gray-800">
+        <p class="text-xs text-gray-400">Showing <span id="page-from">1</span>–<span id="page-to">5</span> of <span id="page-total">12</span></p>
+        <div class="flex gap-1" id="pagination-btns">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    </section><!-- /section-dashboard -->
+
+    <!-- ======================== SALES ANALYTICS ======================== -->
+    <section id="section-sales" class="page-section hidden space-y-6">
+
+      <!-- KPI Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">Avg Order Value</p>
+              <p class="metric-value" id="sales-avg-order">$0</p>
+              <div class="metric-trend up"><i class="fa-solid fa-arrow-trend-up text-xs"></i><span>+5.2% vs last period</span></div>
+            </div>
+            <div class="metric-icon bg-indigo-100 dark:bg-indigo-900/40 text-primary"><i class="fa-solid fa-receipt text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-primary" style="--bar-pct:63%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">63% of monthly target</p>
+        </div>
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">Revenue Growth</p>
+              <p class="metric-value" id="sales-growth-val">0%</p>
+              <div class="metric-trend up"><i class="fa-solid fa-arrow-trend-up text-xs"></i><span>+12% from last month</span></div>
+            </div>
+            <div class="metric-icon bg-emerald-100 dark:bg-emerald-900/40 text-emerald-500"><i class="fa-solid fa-chart-line text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-emerald-500" style="--bar-pct:78%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">78% of monthly target</p>
+        </div>
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">Refund Rate</p>
+              <p class="metric-value" id="sales-refund-val">0%</p>
+              <div class="metric-trend down"><i class="fa-solid fa-arrow-trend-down text-xs"></i><span>-0.4% improvement</span></div>
+            </div>
+            <div class="metric-icon bg-rose-100 dark:bg-rose-900/40 text-rose-500"><i class="fa-solid fa-rotate-left text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-rose-500" style="--bar-pct:18%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">2.8% refund rate</p>
+        </div>
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">Repeat Buyers</p>
+              <p class="metric-value" id="sales-repeat-val">0%</p>
+              <div class="metric-trend up"><i class="fa-solid fa-arrow-trend-up text-xs"></i><span>+3.1% from last month</span></div>
+            </div>
+            <div class="metric-icon bg-purple-100 dark:bg-purple-900/40 text-purple-500"><i class="fa-solid fa-users-gear text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-purple-500" style="--bar-pct:54%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">54% repeat purchase rate</p>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <div class="chart-card lg:col-span-3">
+          <div class="chart-card-header">
+            <div><h2 class="chart-title">Monthly Revenue Comparison</h2><p class="chart-subtitle">Current year vs previous year</p></div>
+          </div>
+          <div class="chart-container"><canvas id="salesComparisonChart"></canvas></div>
+        </div>
+        <div class="chart-card lg:col-span-2">
+          <div class="chart-card-header">
+            <div><h2 class="chart-title">Sales Funnel</h2><p class="chart-subtitle">Conversion at each stage</p></div>
+          </div>
+          <div class="p-4 space-y-5" id="sales-funnel"></div>
+        </div>
+      </div>
+
+      <!-- Top Products Table -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+          <h2 class="text-base font-semibold text-gray-900 dark:text-white">Top Performing Products</h2>
+          <p class="text-xs text-gray-400 mt-0.5">Ranked by total revenue generated</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-gray-50 dark:bg-gray-800/60 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                <th class="px-5 py-3 text-left">#</th>
+                <th class="px-5 py-3 text-left">Product</th>
+                <th class="px-5 py-3 text-left">Category</th>
+                <th class="px-5 py-3 text-right">Units Sold</th>
+                <th class="px-5 py-3 text-right">Revenue</th>
+                <th class="px-5 py-3 text-right">Growth</th>
+              </tr>
+            </thead>
+            <tbody id="top-products-tbody" class="divide-y divide-gray-50 dark:divide-gray-800"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section><!-- /section-sales -->
+
+    <!-- ======================== CUSTOMERS ======================== -->
+    <section id="section-customers" class="page-section hidden space-y-6">
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">Total Customers</p>
+              <p class="metric-value" id="cust-total">0</p>
+              <div class="metric-trend up"><i class="fa-solid fa-arrow-trend-up text-xs"></i><span>+8.5% this quarter</span></div>
+            </div>
+            <div class="metric-icon bg-blue-100 dark:bg-blue-900/40 text-blue-500"><i class="fa-solid fa-users text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-blue-500" style="--bar-pct:82%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">82% of annual target</p>
+        </div>
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">Active Customers</p>
+              <p class="metric-value" id="cust-active">0</p>
+              <div class="metric-trend up"><i class="fa-solid fa-arrow-trend-up text-xs"></i><span>+5.2% this month</span></div>
+            </div>
+            <div class="metric-icon bg-emerald-100 dark:bg-emerald-900/40 text-emerald-500"><i class="fa-solid fa-user-check text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-emerald-500" style="--bar-pct:74%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">74% active rate</p>
+        </div>
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">New This Month</p>
+              <p class="metric-value" id="cust-new">0</p>
+              <div class="metric-trend down"><i class="fa-solid fa-arrow-trend-down text-xs"></i><span>-3.2% vs last month</span></div>
+            </div>
+            <div class="metric-icon bg-purple-100 dark:bg-purple-900/40 text-purple-500"><i class="fa-solid fa-user-plus text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-purple-500" style="--bar-pct:48%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">48% of monthly target</p>
+        </div>
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">Churn Rate</p>
+              <p class="metric-value" id="cust-churn">0%</p>
+              <div class="metric-trend down"><i class="fa-solid fa-arrow-trend-down text-xs"></i><span>-0.8% improvement</span></div>
+            </div>
+            <div class="metric-icon bg-orange-100 dark:bg-orange-900/40 text-orange-500"><i class="fa-solid fa-user-minus text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-orange-500" style="--bar-pct:12%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">1.2% monthly churn</p>
+        </div>
+      </div>
+
+      <!-- Acquisition Chart + Top Customers -->
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <div class="chart-card lg:col-span-3">
+          <div class="chart-card-header">
+            <div><h2 class="chart-title">Customer Acquisition</h2><p class="chart-subtitle">New customers per month this year</p></div>
+          </div>
+          <div class="chart-container"><canvas id="customerAcquisitionChart"></canvas></div>
+        </div>
+        <div class="chart-card lg:col-span-2">
+          <div class="chart-card-header">
+            <div><h2 class="chart-title">Top Customers</h2><p class="chart-subtitle">Ranked by total spend</p></div>
+          </div>
+          <div class="overflow-y-auto" style="max-height:280px">
+            <ul id="top-customers-list" class="divide-y divide-gray-50 dark:divide-gray-800"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Table -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+          <div>
+            <h2 class="text-base font-semibold text-gray-900 dark:text-white">All Customers</h2>
+            <p class="text-xs text-gray-400 mt-0.5">Complete customer directory</p>
+          </div>
+          <div class="relative">
+            <input type="text" id="cust-search" placeholder="Search customers…"
+              class="pl-8 pr-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/40 w-48 transition"/>
+            <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-gray-50 dark:bg-gray-800/60 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                <th class="px-5 py-3 text-left">Customer</th>
+                <th class="px-5 py-3 text-left">Region</th>
+                <th class="px-5 py-3 text-right">Orders</th>
+                <th class="px-5 py-3 text-right">Total Spend</th>
+                <th class="px-5 py-3 text-left">Joined</th>
+                <th class="px-5 py-3 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="customers-tbody" class="divide-y divide-gray-50 dark:divide-gray-800"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section><!-- /section-customers -->
+
+    <!-- ======================== PRODUCTS ======================== -->
+    <section id="section-products" class="page-section hidden space-y-6">
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">Total Products</p>
+              <p class="metric-value" id="prod-total">0</p>
+              <div class="metric-trend up"><i class="fa-solid fa-arrow-trend-up text-xs"></i><span>+4 added this month</span></div>
+            </div>
+            <div class="metric-icon bg-blue-100 dark:bg-blue-900/40 text-blue-500"><i class="fa-solid fa-boxes-stacked text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-blue-500" style="--bar-pct:100%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">Across 5 categories</p>
+        </div>
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">In Stock</p>
+              <p class="metric-value" id="prod-instock">0</p>
+              <div class="metric-trend up"><i class="fa-solid fa-arrow-trend-up text-xs"></i><span>6 items restocked</span></div>
+            </div>
+            <div class="metric-icon bg-emerald-100 dark:bg-emerald-900/40 text-emerald-500"><i class="fa-solid fa-box-open text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-emerald-500" style="--bar-pct:70%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">70% of products in stock</p>
+        </div>
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">Low Stock</p>
+              <p class="metric-value" id="prod-lowstock">0</p>
+              <div class="metric-trend down"><i class="fa-solid fa-triangle-exclamation text-xs"></i><span>Needs reorder soon</span></div>
+            </div>
+            <div class="metric-icon bg-orange-100 dark:bg-orange-900/40 text-orange-500"><i class="fa-solid fa-temperature-low text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-orange-500" style="--bar-pct:30%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">Below reorder threshold</p>
+        </div>
+        <div class="metric-card group">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="metric-label">Out of Stock</p>
+              <p class="metric-value" id="prod-outofstock">0</p>
+              <div class="metric-trend down"><i class="fa-solid fa-arrow-trend-down text-xs"></i><span>-1 from last week</span></div>
+            </div>
+            <div class="metric-icon bg-rose-100 dark:bg-rose-900/40 text-rose-500"><i class="fa-solid fa-ban text-xl"></i></div>
+          </div>
+          <div class="metric-bar mt-4"><div class="metric-bar-fill bg-rose-500" style="--bar-pct:10%"></div></div>
+          <p class="text-xs text-gray-400 mt-1">1 item needs urgent restock</p>
+        </div>
+      </div>
+
+      <!-- Category Revenue Chart -->
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <div><h2 class="chart-title">Category Revenue</h2><p class="chart-subtitle">Revenue generated by product category</p></div>
+        </div>
+        <div class="chart-container" style="max-height:220px"><canvas id="productCategoryChart"></canvas></div>
+      </div>
+
+      <!-- Inventory Table -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+          <div>
+            <h2 class="text-base font-semibold text-gray-900 dark:text-white">Product Inventory</h2>
+            <p class="text-xs text-gray-400 mt-0.5">Live stock &amp; performance overview</p>
+          </div>
+          <button id="btn-restock" class="btn-accent flex items-center gap-2 text-sm">
+            <i class="fa-solid fa-cart-plus"></i> Restock Alert
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-gray-50 dark:bg-gray-800/60 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                <th class="px-5 py-3 text-left">Product</th>
+                <th class="px-5 py-3 text-left">Category</th>
+                <th class="px-5 py-3 text-left">SKU</th>
+                <th class="px-5 py-3 text-right">Stock</th>
+                <th class="px-5 py-3 text-right">Price</th>
+                <th class="px-5 py-3 text-right">Revenue</th>
+                <th class="px-5 py-3 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody" class="divide-y divide-gray-50 dark:divide-gray-800"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section><!-- /section-products -->
+
+    <!-- ======================== REPORTS ======================== -->
+    <section id="section-reports" class="page-section hidden space-y-6">
+
+      <!-- KPI Summary Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-primary shrink-0"><i class="fa-solid fa-dollar-sign text-xl"></i></div>
+          <div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide font-medium">Total Revenue</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">$45,890</p>
+            <p class="text-xs text-emerald-500 font-medium mt-0.5"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+12% vs last year</p>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-blue-500 shrink-0"><i class="fa-solid fa-cart-shopping text-xl"></i></div>
+          <div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide font-medium">Total Orders</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">3,240</p>
+            <p class="text-xs text-emerald-500 font-medium mt-0.5"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+8.5% vs last month</p>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-emerald-500 shrink-0"><i class="fa-solid fa-users text-xl"></i></div>
+          <div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide font-medium">Total Customers</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">8,420</p>
+            <p class="text-xs text-rose-500 font-medium mt-0.5"><i class="fa-solid fa-arrow-trend-down mr-1"></i>-3.2% vs last month</p>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center text-orange-500 shrink-0"><i class="fa-solid fa-percent text-xl"></i></div>
+          <div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide font-medium">Conversion Rate</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">4.6%</p>
+            <p class="text-xs text-emerald-500 font-medium mt-0.5"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+1.8% improvement</p>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center text-purple-500 shrink-0"><i class="fa-solid fa-receipt text-xl"></i></div>
+          <div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide font-medium">Avg Order Value</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">$141.60</p>
+            <p class="text-xs text-emerald-500 font-medium mt-0.5"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+5.2% vs last quarter</p>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center text-teal-500 shrink-0"><i class="fa-solid fa-star text-xl"></i></div>
+          <div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide font-medium">Customer Satisfaction</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">4.7 / 5</p>
+            <p class="text-xs text-emerald-500 font-medium mt-0.5"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+0.2 pts this quarter</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Report Generator + Category Performance -->
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <div class="chart-card lg:col-span-2 !p-0 overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+            <h2 class="chart-title">Generate Report</h2>
+            <p class="chart-subtitle">Download a custom business report</p>
+          </div>
+          <form id="report-form" class="p-5 space-y-4">
+            <div>
+              <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Report Type</label>
+              <select id="rpt-type" class="filter-select w-full">
+                <option value="sales">Sales Summary</option>
+                <option value="customers">Customer Report</option>
+                <option value="products">Product Performance</option>
+                <option value="full">Full Dashboard Report</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Date Range</label>
+              <select id="rpt-range" class="filter-select w-full">
+                <option value="week">This Week</option>
+                <option value="month" selected>This Month</option>
+                <option value="quarter">This Quarter</option>
+                <option value="year">This Year</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Format</label>
+              <select id="rpt-format" class="filter-select w-full">
+                <option value="txt">Plain Text (.txt)</option>
+                <option value="csv">CSV Spreadsheet (.csv)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-primary w-full flex items-center justify-center gap-2">
+              <i class="fa-solid fa-file-arrow-down"></i> Download Report
+            </button>
+          </form>
+        </div>
+        <div class="chart-card lg:col-span-3">
+          <div class="chart-card-header">
+            <div><h2 class="chart-title">Category Performance</h2><p class="chart-subtitle">Revenue share &amp; breakdown by category</p></div>
+          </div>
+          <div class="p-4 space-y-4" id="report-category-perf"></div>
+        </div>
+      </div>
+
+    </section><!-- /section-reports -->
+
+    <!-- ======================== SETTINGS ======================== -->
+    <section id="section-settings" class="page-section hidden space-y-6">
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left: Profile + Security -->
+        <div class="lg:col-span-2 space-y-5">
+
+          <!-- Profile -->
+          <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+              <h2 class="text-base font-semibold text-gray-900 dark:text-white">Profile Information</h2>
+              <p class="text-xs text-gray-400 mt-0.5">Update your personal details</p>
+            </div>
+            <form id="settings-profile-form" class="p-5 space-y-4">
+              <div class="flex items-center gap-4 mb-2">
+                <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold select-none">A</div>
+                <div>
+                  <p class="text-sm font-semibold text-gray-900 dark:text-white">Admin User</p>
+                  <p class="text-xs text-gray-400">Dashboard Administrator</p>
+                  <button type="button" class="text-xs text-primary hover:underline mt-1">Change Avatar</button>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Full Name</label>
+                  <input type="text" value="Admin User" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"/>
+                </div>
+                <div>
+                  <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Email Address</label>
+                  <input type="email" value="admin@rise.co" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"/>
+                </div>
+                <div>
+                  <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Phone Number</label>
+                  <input type="tel" value="+91 98765 43210" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"/>
+                </div>
+                <div>
+                  <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Company</label>
+                  <input type="text" value="RISE Analytics Pvt. Ltd." class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"/>
+                </div>
+              </div>
+              <div class="flex gap-2 pt-1">
+                <button type="submit" class="btn-primary flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                <button type="button" class="btn-secondary">Cancel</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Security -->
+          <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+              <h2 class="text-base font-semibold text-gray-900 dark:text-white">Security</h2>
+              <p class="text-xs text-gray-400 mt-0.5">Manage your account security</p>
+            </div>
+            <div class="p-5 space-y-4">
+              <div>
+                <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Current Password</label>
+                <input type="password" placeholder="Enter current password" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"/>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">New Password</label>
+                  <input type="password" placeholder="New password" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"/>
+                </div>
+                <div>
+                  <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Confirm Password</label>
+                  <input type="password" placeholder="Confirm new password" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"/>
+                </div>
+              </div>
+              <button type="button" id="btn-change-password" class="btn-secondary flex items-center gap-2"><i class="fa-solid fa-lock"></i> Update Password</button>
+            </div>
+          </div>
+
+        </div><!-- /left col -->
+
+        <!-- Right: Notifications + Preferences -->
+        <div class="space-y-5">
+
+          <!-- Notifications -->
+          <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+              <h2 class="text-base font-semibold text-gray-900 dark:text-white">Notifications</h2>
+              <p class="text-xs text-gray-400 mt-0.5">Choose what to be notified about</p>
+            </div>
+            <div class="p-5 space-y-4">
+              <div class="flex items-center justify-between">
+                <div><p class="text-sm font-medium text-gray-900 dark:text-white">New Orders</p><p class="text-xs text-gray-400">Get notified for every new order</p></div>
+                <label class="settings-toggle"><input type="checkbox" checked id="notif-orders"><span class="toggle-slider"></span></label>
+              </div>
+              <div class="flex items-center justify-between">
+                <div><p class="text-sm font-medium text-gray-900 dark:text-white">Low Stock Alerts</p><p class="text-xs text-gray-400">When stock drops below threshold</p></div>
+                <label class="settings-toggle"><input type="checkbox" checked id="notif-stock"><span class="toggle-slider"></span></label>
+              </div>
+              <div class="flex items-center justify-between">
+                <div><p class="text-sm font-medium text-gray-900 dark:text-white">Payment Updates</p><p class="text-xs text-gray-400">Successful &amp; failed payments</p></div>
+                <label class="settings-toggle"><input type="checkbox" checked id="notif-payment"><span class="toggle-slider"></span></label>
+              </div>
+              <div class="flex items-center justify-between">
+                <div><p class="text-sm font-medium text-gray-900 dark:text-white">Marketing Emails</p><p class="text-xs text-gray-400">Weekly analytics digest</p></div>
+                <label class="settings-toggle"><input type="checkbox" id="notif-marketing"><span class="toggle-slider"></span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preferences -->
+          <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+              <h2 class="text-base font-semibold text-gray-900 dark:text-white">Preferences</h2>
+              <p class="text-xs text-gray-400 mt-0.5">Customise your experience</p>
+            </div>
+            <div class="p-5 space-y-4">
+              <div>
+                <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Language</label>
+                <select class="filter-select w-full">
+                  <option selected>English (India)</option>
+                  <option>Hindi</option>
+                  <option>Tamil</option>
+                  <option>Telugu</option>
+                  <option>Kannada</option>
+                  <option>Malayalam</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Currency</label>
+                <select class="filter-select w-full">
+                  <option selected>&#8377; Indian Rupee (INR)</option>
+                  <option>$ US Dollar (USD)</option>
+                  <option>&#8364; Euro (EUR)</option>
+                  <option>&#163; British Pound (GBP)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1">Time Zone</label>
+                <select class="filter-select w-full">
+                  <option selected>Asia/Kolkata (IST +5:30)</option>
+                  <option>UTC</option>
+                  <option>America/New_York</option>
+                </select>
+              </div>
+              <button type="button" id="btn-save-prefs" class="btn-primary w-full flex items-center justify-center gap-2">
+                <i class="fa-solid fa-floppy-disk"></i> Save Preferences
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /right col -->
+      </div>
+
+    </section><!-- /section-settings -->
+
+  </main>
+</div><!-- end main-wrapper -->
+
+<!-- ============================================================
+     TOAST NOTIFICATION
+     ============================================================ -->
+<div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+
+<!-- Overlay for mobile sidebar -->
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/40 z-30 hidden md:hidden backdrop-blur-sm"></div>
+
+<!-- Custom JS -->
+<script src="script.js"></script>
+</body>
+</html>
